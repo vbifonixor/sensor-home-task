@@ -4,6 +4,7 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
 ], function (provide, EventManager, extend) {
 
     var DBL_TAP_STEP = 0.2;
+    var WHEEL_STEP = 0.02;
 
     var Controller = function (view) {
         this._view = view;
@@ -36,6 +37,10 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
                 return;
             }
 
+            if (event.type.indexOf('zoom') != -1) {
+              this._processWheel(event);
+            }
+
             if (event.type === 'move') {
                 if (event.distance > 1 && event.distance !== this._initEvent.distance) {
                     this._processMultitouch(event);
@@ -46,6 +51,7 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
                 this._initState = this._view.getState();
                 this._initEvent = event;
             }
+
         },
 
         _processDrag: function (event) {
@@ -68,6 +74,24 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
                 event.targetPoint,
                 state.scale + DBL_TAP_STEP
             );
+        },
+
+        _processWheel: function (event) {
+          var state = this._view.getState();
+
+          var currentStep = 0;
+
+          if (event.type === 'zoomout') {
+            currentStep -= WHEEL_STEP;
+          }
+          else if (event.type === 'zoomin') {
+            currentStep += WHEEL_STEP;
+          }
+
+          this._scale(
+            event.targetPoint,
+            state.scale + currentStep
+          )
         },
 
         _scale: function (targetPoint, newScale) {
