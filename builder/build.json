@@ -1,0 +1,21 @@
+{
+    "src": {
+        "js": "../src/**/*.js",
+        "css": "../src/**/*.css",
+        "templates": "../src/**/*.ymtpl"
+    },
+    "dest": "../build/",
+    "namespace": "ym",
+    "target": "standalone",
+    "serverUrl": null,
+    "asyncMap": false,
+    "initialMap": null,
+    "fallbackFilter": null,
+    "fallbackModule": null,
+    "store": "solid",
+    "preload": [],
+    "concatTo": "index.js",
+    "minify": false,
+    "dataUriImages": true,
+    "publicDir": "public"
+}

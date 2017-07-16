@@ -1,0 +1,27 @@
+{
+  "name": "shri2017-sensor-base",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "dependencies": {
+    "ymb": "2.0.4"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vsesh/shri2017-sensor-base.git"
+  },
+  "author": "vsesh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vsesh/shri2017-sensor-base/issues"
+  },
+  "homepage": "https://github.com/vsesh/shri2017-sensor-base#readme",
+  "scripts": {
+    "build": "ymb builder",
+    "watch": "ymb dev builder"
+  },
+  "bin": {
+    "ymb": "./bin/ymb"
+  }
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="build/index.js"></script>
+    <script>
+        ym.modules.require('shri2017.ImageViewer', function (ImageViewer) {
+            var imageViewer = new ImageViewer({
+                url: 'image.jpg',
+                elem: document.getElementById('holder'),
+                size: {
+                    width: 700,
+                    height: 700
+                }
+            });
+        });
+    </script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #holder {
+            margin: 100px auto;
+            width: 700px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id=holder>
+    </div>
+</body>
+
+</html>
