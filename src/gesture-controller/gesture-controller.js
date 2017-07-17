@@ -13,6 +13,8 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
             this._eventHandler.bind(this)
         );
         this._lastEventTypes = '';
+        this._oneTouchEventTypes = '';
+        this._lastStartEvent = {};
     };
 
     extend(Controller.prototype, {
@@ -27,7 +29,7 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
             if (!this._lastEventTypes) {
                 setTimeout(function () {
                     this._lastEventTypes = '';
-                }.bind(this), 500);
+                }.bind(this), 1000);
             }
             this._lastEventTypes += ' ' + event.type;
 
@@ -37,11 +39,39 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
                 return;
             }
 
+            // One Touch Zoom
+
+            // Добавляем в строку жеста информацию о его начале из this._lastEventTypes
+            if (event.type === 'start') {
+              this._lastStartEvent = event;
+            }
+
+            if ((/(start) ((move) ){0,2}(end )(start) ((move) ?)+/g).test(this._lastEventTypes)) {
+              if(!this._oneTouchEventTypes) {
+                this._oneTouchEventTypes = this._lastEventTypes;
+              }
+            }
+            // Добавляем информацию о текущем событии (если таковое происходит)
+
+            if(this._oneTouchEventTypes !== ''){
+              this._oneTouchEventTypes += ' ' + event.type;
+            }
+
+            if((/(start) ((move) ){0,2}(end )(start) ((move )+)/g).test(this._oneTouchEventTypes))  {
+              // Вызываем OneTouchZoom
+              this._processOneTouchZoom(this._lastStartEvent, event);
+            }
+
+            if ((/(start) ((move) ){0,2}(end )(start) ((move )+(end))/g).test(this._oneTouchEventTypes)){
+              this._oneTouchEventTypes = '';
+            }
+
+
             if (event.type.indexOf('zoom') != -1) {
               this._processWheel(event);
             }
 
-            if (event.type === 'move') {
+            if (event.type === 'move' && this._oneTouchEventTypes === '') {
                 if (event.distance > 1 && event.distance !== this._initEvent.distance) {
                     this._processMultitouch(event);
                 } else {
@@ -74,6 +104,24 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
                 event.targetPoint,
                 state.scale + DBL_TAP_STEP
             );
+        },
+
+        _processOneTouchZoom: function (startEvent, moveEvent) {
+          var state = this._view.getState();
+
+          var targetPoint = {
+              x: (startEvent.targetPoint.x + moveEvent.targetPoint.x) / 2,
+              y: (startEvent.targetPoint.y + moveEvent.targetPoint.y) / 2
+          };
+
+          distance = moveEvent.targetPoint.y - startEvent.targetPoint.y;
+
+          console.log();
+
+          this._scale(
+            targetPoint,
+            state.scale + (distance / 10000)
+          );
         },
 
         _processWheel: function (event) {

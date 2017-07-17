@@ -194,7 +194,7 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
               x: event.clientX - elemOffset.x,
               y: event.clientY - elemOffset.y
             },
-            distance: 1
+            distance: 0
           })
         },
 
