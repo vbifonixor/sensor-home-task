@@ -1,6 +1,7 @@
 ym.modules.define('shri2017.imageViewer.EventManager', [
-    'util.extend'
-], function (provide, extend) {
+    'util.extend',
+    'shri2017.imageViewer.PointerCollection'
+], function (provide, extend, PointerCollection) {
 
     var EVENTS = {
         mousedown: 'start',
@@ -16,6 +17,8 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
         wheelup: 'zoomin',
         wheeldown: 'zoomout'
     };
+
+    var pointers = new PointerCollection();
 
     function EventManager(elem, callback) {
         this._elem = elem;
@@ -125,20 +128,60 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
           if (event.type === 'pointerdown') {
               this._addEventListeners('pointermove pointerup pointercancel', this._elem, this._pointerListener);
               event.target.setPointerCapture(event.pointerId);
+              if (event.pointerType == 'touch' && !pointers.exists(event)) {
+                pointers.add(event);
+              }
           } else if (event.type === 'pointerup') {
+            if (pointers.exists(event)) {
+              pointers.remove(event);
+              pointers.clear();
+            }
               this._removeEventListeners('pointermove pointerup', this._elem, this._pointerListener);
               event.target.releasePointerCapture(event.pointerId);
+          } else if (event.type === 'pointermove') {
+            if (pointers.exists(event)) {
+    					pointers.update(event);
+    				}
+          } else if (pointers.isMultiTouch() && (event.type === 'pointerdown' || event.type === 'pointermove')) {
+            pointers.each(function (pointer) {
+              pointers.remove(pointer);
+            });
           }
 
+          var targetPoint;
+          var distance = 1;
           var elemOffset = this._calculateElementOffset(this._elem);
+
+          var pointersArr = pointers.getArray();
+
+          if (pointersArr.length === 1) {
+            targetPoint = {
+              x: pointersArr[0].clientX,
+              y: pointersArr[0].clientY
+            }
+          }
+          else {
+            var firstTouch = pointersArr[0];
+            var secondTouch = pointersArr[1];
+            if (pointersArr.length){
+              targetPoint = this._calculateTargetPoint(firstTouch, secondTouch);
+              distance = this._calculateDistance(firstTouch, secondTouch);
+            }
+            else {
+              targetPoint = {
+                x: 0,
+                y: 0
+              };
+            }
+          };
+
+          targetPoint.x -= elemOffset.x;
+          targetPoint.y -= elemOffset.y;
 
           this._callback({
               type: EVENTS[event.type],
-              targetPoint: {
-                  x: event.clientX - elemOffset.x,
-                  y: event.clientY - elemOffset.y
-              },
-              distance: 1
+              targetPoint: targetPoint,
+              distance: distance
           });
         },
 
