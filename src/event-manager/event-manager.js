@@ -120,7 +120,7 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
         },
 
         _pointerEventHandler: function(event) {
-          // event.preventDefault();
+          event.preventDefault();
 
           if (event.type === 'pointerdown') {
               this._addEventListeners('pointermove pointerup pointercancel', this._elem, this._pointerListener);
