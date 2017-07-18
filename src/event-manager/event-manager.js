@@ -83,7 +83,8 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
                     x: event.clientX - elemOffset.x,
                     y: event.clientY - elemOffset.y
                 },
-                distance: 1
+                distance: 1,
+                device: 'mouse'
             });
         },
 
@@ -118,7 +119,8 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
             this._callback({
                 type: EVENTS[event.type],
                 targetPoint: targetPoint,
-                distance: distance
+                distance: distance,
+                device: 'touch'
             });
         },
 
@@ -128,7 +130,7 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
           if (event.type === 'pointerdown') {
               this._addEventListeners('pointermove pointerup pointercancel', this._elem, this._pointerListener);
               event.target.setPointerCapture(event.pointerId);
-              if (event.pointerType == 'touch' && !pointers.exists(event)) {
+              if (!pointers.exists(event)) {
                 pointers.add(event);
               }
           } else if (event.type === 'pointerup') {
@@ -178,10 +180,13 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
           targetPoint.x -= elemOffset.x;
           targetPoint.y -= elemOffset.y;
 
+          console.log(targetPoint);
+
           this._callback({
               type: EVENTS[event.type],
               targetPoint: targetPoint,
-              distance: distance
+              distance: distance,
+              device: event.pointerType
           });
         },
 

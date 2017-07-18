@@ -33,9 +33,10 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
             }
             this._lastEventTypes += ' ' + event.type;
 
-            if (this._lastEventTypes.indexOf('start end start end') > -1) {
+
+            if ((/(start) ((move) ){0,2}(end )(start) ((move ){0,2}(end))/g).test(this._lastEventTypes)) {
                 this._lastEventTypes = '';
-                this._processDbltap(event);
+                this._processDbltap(this._lastStartEvent);
                 return;
             }
 
@@ -46,7 +47,7 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
               this._lastStartEvent = event;
             }
 
-            if ((/(start) ((move) ){0,2}(end )(start) ((move) ?)+/g).test(this._lastEventTypes)) {
+            if ((/(start) ((move) ){0,2}(end )(start) ((move) ?)+/g).test(this._lastEventTypes) && event.device === 'touch') {
               if(!this._oneTouchEventTypes) {
                 this._oneTouchEventTypes = this._lastEventTypes;
               }
@@ -64,7 +65,11 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
 
             if ((/(start) ((move) ){0,2}(end )(start) ((move )+(end))/g).test(this._oneTouchEventTypes)){
               this._oneTouchEventTypes = '';
+              return;
             }
+
+
+
 
 
             if (event.type.indexOf('zoom') != -1) {
@@ -110,17 +115,15 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
           var state = this._view.getState();
 
           var targetPoint = {
-              x: (startEvent.targetPoint.x + moveEvent.targetPoint.x) / 2,
-              y: (startEvent.targetPoint.y + moveEvent.targetPoint.y) / 2
+              x: startEvent.targetPoint.x,
+              y: startEvent.targetPoint.y
           };
 
           distance = moveEvent.targetPoint.y - startEvent.targetPoint.y;
 
-          console.log();
-
           this._scale(
             targetPoint,
-            state.scale + (distance / 10000)
+            state.scale + (distance / 50000)
           );
         },
 
