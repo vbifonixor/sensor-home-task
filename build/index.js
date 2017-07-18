@@ -3106,12 +3106,13 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
               this._oneTouchEventTypes += ' ' + event.type;
             }
 
-            if((/(start) ((move) ){0,2}(end )(start) ((move )+)/g).test(this._oneTouchEventTypes))  {
+            if((/(start) ((move) ){0,2}(end )(start) ((move )+)/g).test(this._oneTouchEventTypes) &&
+                event.type !== 'end')  {
               // Вызываем OneTouchZoom
               this._processOneTouchZoom(this._lastStartEvent, event);
             }
 
-            if ((/(start) ((move) ){0,2}(end )(start) ((move )+(end))/g).test(this._oneTouchEventTypes)){
+            if ((/(start) ((move) ){0,2}(end )(start) ((move )+(end))/g).test(this._oneTouchEventTypes) && event.type === 'end'){
               this._oneTouchEventTypes = '';
               return;
             }
