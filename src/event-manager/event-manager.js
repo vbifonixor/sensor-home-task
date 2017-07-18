@@ -180,8 +180,6 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
           targetPoint.x -= elemOffset.x;
           targetPoint.y -= elemOffset.y;
 
-          console.log(targetPoint);
-
           this._callback({
               type: EVENTS[event.type],
               targetPoint: targetPoint,
