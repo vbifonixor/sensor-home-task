@@ -37,6 +37,7 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
             if ((/(start) ((move) ){0,2}(end )(start) ((move ){0,2}(end))/g).test(this._lastEventTypes)) {
                 this._lastEventTypes = '';
                 this._oneTouchEventTypes = '';
+                this._lastStartEvent = undefined;
                 this._processDbltap(this._lastStartEvent);
                 return;
             }
@@ -110,6 +111,9 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
         },
 
         _processOneTouchZoom: function (startEvent, moveEvent) {
+          if(!startEvent) {
+            return;
+          }
           var state = this._view.getState();
 
           var targetPoint = {
